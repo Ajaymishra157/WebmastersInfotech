@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1004072480876",
+    "project_id": "webmastersinfotech-ae0da",
+    "storage_bucket": "webmastersinfotech-ae0da.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004072480876:android:0c3361d7e0a00f8764e849",
+        "android_client_info": {
+          "package_name": "com.webmasters"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdGt5_rNSWv0-qkzdBVbg2xb0YjsU1U6I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
