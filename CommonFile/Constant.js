@@ -110,6 +110,9 @@ export const ENDPOINTS = {
     list_group_attendance_edit: `${BASE_URL}list_group_attendance_edit.php`,
 
 
+    ScanTaskImage: `${BASE_URL}scan_task_image.php`,
+
+
 
 
 

@@ -45,18 +45,13 @@ const LeaveNotificationModal = ({ visible, onClose, memberId, navigation, topOff
     const fetchPendingLeaves = async () => {
         setLoading(true);
         try {
-            const today = new Date();
-            const firstDate = new Date(today.getFullYear(), today.getMonth(), 1);
-            const formatDateLocal = date =>
-                date.toLocaleDateString('en-GB').split('/').join('-'); // DD-MM-YYYY
-
             const response = await fetch(ENDPOINTS.ListLeave, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     member_id: memberId,
-                    start_date: formatDateLocal(firstDate),
-                    end_date: formatDateLocal(today),
+                    start_date: '',   // Leave screen jaisa: koi date filter nahi
+                    end_date: '',
                     leave_status: 'Pending',
                 }),
             });

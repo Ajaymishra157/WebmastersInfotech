@@ -61,6 +61,15 @@ const formatFullDate = dateStr => {
     return `${String(d.getDate()).padStart(2, '0')} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 };
 
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+const getDayName = dateStr => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '';
+    return DAYS[d.getDay()];
+};
+
 // Client-side truth for past/upcoming — doesn't rely on API's festival_type,
 // just compares festival_date to today (midnight-safe compare on date only).
 const computeIsUpcoming = dateStr => {
@@ -354,6 +363,20 @@ const ListFestival = () => {
                     },
                 ]}>
 
+                {/* Day name - top right */}
+                <View
+                    style={[
+                        styles.dayChip,
+                        { backgroundColor: isUpcoming ? colors.upcomingBg : colors.pastBg },
+                    ]}>
+                    <Text
+                        style={[
+                            styles.dayChipText,
+                            { color: isUpcoming ? colors.upcoming : colors.past },
+                        ]}>
+                        {getDayName(item.festival_date)}
+                    </Text>
+                </View>
 
                 <View
                     style={[
@@ -810,6 +833,7 @@ const styles = StyleSheet.create({
         elevation: 2,
         position: 'relative',
         overflow: 'hidden',
+        minHeight: 110,
     },
     ribbon: {
         position: 'absolute',
@@ -821,11 +845,28 @@ const styles = StyleSheet.create({
         paddingVertical: 3,
         borderBottomLeftRadius: 10,
     },
+
     ribbonText: {
         fontFamily: 'Roboto-Bold',
         fontSize: 9,
         marginLeft: 3,
         letterSpacing: 0.3,
+    },
+
+    dayChip: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        paddingHorizontal: 10,
+        paddingVertical: 3,
+        borderBottomLeftRadius: 10,
+        zIndex: 1,
+    },
+    dayChipText: {
+        fontFamily: 'Roboto-Bold',
+        fontSize: 10,
+        letterSpacing: 0.4,
+        textTransform: 'uppercase',
     },
     dateBadge: {
         width: 52,
@@ -868,7 +909,7 @@ const styles = StyleSheet.create({
     statusDot: { width: 6, height: 6, borderRadius: 3, marginRight: 5 },
     statusText: { fontFamily: 'Roboto-Medium', fontSize: 11 },
 
-    actionCol: { alignItems: 'center', marginLeft: 8 },
+    actionCol: { alignItems: 'center', marginLeft: 8, marginTop: 18 },
     actionBtn: {
         width: 34,
         height: 34,

@@ -241,9 +241,6 @@ const AddStaff = () => {
     if (!isEdit && !Password) {
       setPasswordError('Staff Password is Required');
       isValid = false;
-    } else if (Password && Password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
-      isValid = false;
     } else {
       setPasswordError('');
     }

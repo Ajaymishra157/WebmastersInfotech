@@ -63,10 +63,16 @@ const AddFestival = () => {
     const [errors, setErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
 
+    const [endDate, setEndDate] = useState(null);
+    const [showEndPicker, setShowEndPicker] = useState(false);
+
     const validate = () => {
         const newErrors = {};
         if (!festivalName.trim()) newErrors.name = 'Festival name is required';
         if (!festivalDate) newErrors.date = 'Festival date is required';
+        if (!isEdit && endDate && festivalDate && endDate < festivalDate) {
+            newErrors.endDate = 'End date cannot be before start date';
+        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -79,6 +85,7 @@ const AddFestival = () => {
         }
         if (selectedDate) {
             setFestivalDate(selectedDate);
+            if (endDate && endDate < selectedDate) setEndDate(null);
             setErrors(prev => ({ ...prev, date: undefined }));
         }
         if (Platform.OS === 'android') setShowDatePicker(false);
@@ -99,6 +106,7 @@ const AddFestival = () => {
                 : {
                     festival_name: festivalName.trim(),
                     festival_date: toApiDate(festivalDate),
+                    end_date: endDate ? toApiDate(endDate) : '',
                 };
 
             const response = await fetch(url, {
@@ -215,6 +223,58 @@ const AddFestival = () => {
                         mode="date"
                         display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                         onChange={handleDateChange}
+                    />
+                )}
+                {/* End Date (sirf add mode me) */}
+                {!isEdit && (
+                    <>
+                        <Text style={[styles.label, { marginTop: 18 }]}>
+                            End Date{' '}
+                            <Text style={{ color: colors.subtext, fontFamily: 'Roboto-Regular' }}>
+                                (optional, for multi-day)
+                            </Text>
+                        </Text>
+                        <TouchableOpacity
+                            style={[styles.inputWrap, errors.endDate && styles.inputError]}
+                            activeOpacity={0.7}
+                            onPress={() => setShowEndPicker(true)}>
+                            <Icon name="calendar-range-outline" size={18} color={colors.subtext} />
+                            <Text style={[styles.input, { color: endDate ? colors.text : colors.subtext }]}>
+                                {endDate ? formatDisplayDate(endDate) : 'Same day (single day)'}
+                            </Text>
+                            {endDate ? (
+                                <TouchableOpacity onPress={() => setEndDate(null)}>
+                                    <Icon name="close-circle" size={18} color={colors.subtext} />
+                                </TouchableOpacity>
+                            ) : (
+                                <Icon name="chevron-down" size={18} color={colors.subtext} />
+                            )}
+                        </TouchableOpacity>
+                        {errors.endDate ? <Text style={styles.errorText}>{errors.endDate}</Text> : null}
+
+                        {festivalDate && endDate && endDate >= festivalDate && (
+                            <Text style={{ marginTop: 8, marginLeft: 4, fontSize: 12, color: colors.primary, fontFamily: 'Roboto-Medium' }}>
+                                {Math.round((endDate - festivalDate) / 86400000) + 1} days holiday
+                            </Text>
+                        )}
+                    </>
+                )}
+
+                {showEndPicker && (
+                    <DateTimePicker
+                        value={endDate || festivalDate || new Date()}
+                        mode="date"
+                        display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                        minimumDate={festivalDate || undefined}
+                        onChange={(event, d) => {
+                            setShowEndPicker(Platform.OS === 'ios');
+                            if (event.type === 'dismissed') {
+                                setShowEndPicker(false);
+                                return;
+                            }
+                            if (d) setEndDate(d);
+                            if (Platform.OS === 'android') setShowEndPicker(false);
+                        }}
                     />
                 )}
             </ScrollView>

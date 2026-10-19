@@ -20,6 +20,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Toast from 'react-native-toast-message';
 import colors from '../colors/Colors';
 import { ENDPOINTS } from '../CommonFile/Constant';
+import { stripHtml } from '../CommonFile/htmlUtils';
 
 // ===== SCREEN: Rules =====
 // READ MODE: HTML jaisa hai waisa hi render hota hai (list, bold, colored text — admin
@@ -139,7 +140,7 @@ const Rules = () => {
 
     // ===== UPDATE: update_rules_announce.php ko same row (rule_id) update karne bhejo =====
     const saveUpdate = async () => {
-        const plainCheck = editorHtml.replace(/<[^>]+>/g, '').trim();
+        const plainCheck = stripHtml(editorHtml);
         if (!plainCheck) {
             Toast.show({ type: 'error', text1: 'Field khali nahi ho sakta', position: 'bottom' });
             return;
@@ -183,7 +184,7 @@ const Rules = () => {
                 // ===== NAYA: editor ko CHHODKAR baaki sabko (CEO ho ya HR, dono cases) notification
                 // bhejo — background mein, user ko wait nahi karana, jaise AddLeave mein hota hai =====
                 try {
-                    const plainPreview = editorHtml.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/gi, ' ');
+                    const plainPreview = stripHtml(editorHtml);
 
                     const notifyPayload = {
                         type: activeTab, // 'rules' ya 'announcements'

@@ -1,1 +1,12 @@
 functions/serviceAccountKey.json.json
+node_modules
+# Android build files
+android/.gradle/
+android/build/
+android/app/build/
+android/app/release/
+*.apk
+*.aab
+*.hprof
+
+

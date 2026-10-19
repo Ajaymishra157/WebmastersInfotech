@@ -25,6 +25,7 @@ import Toast from 'react-native-toast-message';
 import RNExitApp from 'react-native-exit-app';
 import LeaveNotificationModal from '../Components/LeaveNotificationModal';
 import ReactNativeBiometrics from 'react-native-biometrics';
+import { stripHtml } from '../CommonFile/htmlUtils';
 
 const Deshboard = () => {
   const navigation = useNavigation();
@@ -229,14 +230,14 @@ const Deshboard = () => {
 
       if (!success) return; // user ne cancel kiya
 
-      const currentTime = getCurrentFormattedTime();
-      const now = new Date();
-      const date = `${now.getDate().toString().padStart(2, '0')}-${(now.getMonth() + 1)
-        .toString()
-        .padStart(2, '0')}-${now.getFullYear()}`;
+      // const currentTime = getCurrentFormattedTime();
+      // const now = new Date();
+      // const date = `${now.getDate().toString().padStart(2, '0')}-${(now.getMonth() + 1)
+      //   .toString()
+      //   .padStart(2, '0')}-${now.getFullYear()}`;
 
       setPunchSubmitting(true);
-      const result = await Attendance(action, date, currentTime, ''); // remark khali
+      const result = await Attendance(action, '', '', ''); // remark khali
       setPunchSubmitting(false);
 
       if (!result?.success) {
@@ -271,18 +272,18 @@ const Deshboard = () => {
   // API fail ho (code 400, status false), to state toggle nahi hoga, Share modal nahi khulega,
   // sirf error Toast dikhega aur remark modal open rahega taaki user dobara try kar sake. =====
   const confirmPunch = async () => {
-    const currentTime = getCurrentFormattedTime();
-    const now = new Date();
-    const date = `${now.getDate().toString().padStart(2, '0')}-${(
-      now.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, '0')}-${now.getFullYear()}`;
+    // const currentTime = getCurrentFormattedTime();
+    // const now = new Date();
+    // const date = `${now.getDate().toString().padStart(2, '0')}-${(
+    //   now.getMonth() + 1
+    // )
+    //   .toString()
+    //   .padStart(2, '0')}-${now.getFullYear()}`;
 
     const actionJustDone = pendingAction; // reset hone se pehle yaad rakh lo
 
     setPunchSubmitting(true);
-    const result = await Attendance(pendingAction, date, currentTime, remarkText.trim());
+    const result = await Attendance(pendingAction, '', '', remarkText.trim());
     setPunchSubmitting(false);
 
     if (!result?.success) {
@@ -414,8 +415,8 @@ const Deshboard = () => {
     const payload = {
       member_id: memberId,
       action: action,
-      date: date,
-      punch_time: punchTime,
+      // date: date,
+      // punch_time: punchTime,
     };
 
     if (action === 'punch_in') {
@@ -511,18 +512,13 @@ const Deshboard = () => {
     }
 
     try {
-      const today = new Date();
-      const firstDate = new Date(today.getFullYear(), today.getMonth(), 1);
-      const formatDateLocal = date =>
-        date.toLocaleDateString('en-GB').split('/').join('-');
-
       const response = await fetch(ENDPOINTS.ListLeave, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           member_id: memberId,
-          start_date: formatDateLocal(firstDate),
-          end_date: formatDateLocal(today),
+          start_date: '',   // Leave screen jaisa: koi date filter nahi
+          end_date: '',
           leave_status: 'Pending',
         }),
       });
@@ -625,11 +621,7 @@ const Deshboard = () => {
     }
   };
 
-  // HTML tags hataane ka chhota helper — banner preview ke liye
-  const stripHtmlPreview = (html) => {
-    if (!html) return '';
-    return html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/\s+/g, ' ').trim();
-  };
+
 
   useEffect(() => {
     const fetchName = async () => {
@@ -957,7 +949,7 @@ const Deshboard = () => {
                       color: '#3B82F6',
                       marginTop: 1,
                     }}>
-                    {stripHtmlPreview(latestAnnouncement.announcements) || 'Tap to view details'}
+                    {stripHtml(latestAnnouncement.announcements) || 'Tap to view details'}
                   </Text>
                 </View>
 
@@ -1027,7 +1019,7 @@ const Deshboard = () => {
                   <Text
                     numberOfLines={1}
                     style={{ fontSize: 10.5, fontFamily: 'SemiBold24', color: '#7C3AED', marginTop: 1 }}>
-                    {stripHtmlPreview(latestRulesData.rules) || 'Tap to view details'}
+                    {stripHtml(latestRulesData.rules) || 'Tap to view details'}
                   </Text>
                 </View>
 

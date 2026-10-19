@@ -4,6 +4,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Image,
   Modal,
@@ -24,6 +25,7 @@ import LogoutUser from '../Components/LogoutUser';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { ENDPOINTS } from '../CommonFile/Constant';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 const AddTask = () => {
   const navigation = useNavigation();
@@ -63,6 +65,10 @@ const AddTask = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [moduleLoading, setModuleLoading] = useState(false);
   const [noModulesForProject, setNoModulesForProject] = useState(false);
+
+  const [scanLoading, setScanLoading] = useState(false);
+  const [scannedTasks, setScannedTasks] = useState([]);
+  const [scanModal, setScanModal] = useState(false);
 
   const isAdmin = memberPosition?.trim().toLowerCase() === 'ceo';
   // 👈 NAYA — Project Manager ko bhi admin jaisa Staff Member selection milega
@@ -170,6 +176,55 @@ const AddTask = () => {
 
     resolveEditIds();
   }, [isEditMode, taskData]);
+
+  const pickAndScan = async (fromCamera) => {
+    const picker = fromCamera ? launchCamera : launchImageLibrary;
+    const res = await picker({
+      mediaType: 'photo',
+      includeBase64: true,
+      quality: 0.7,
+      maxWidth: 1400,
+      maxHeight: 1400,
+    });
+
+    if (res.didCancel || !res.assets?.length) return;
+    const asset = res.assets[0];
+
+    setScanLoading(true);
+    try {
+      const response = await fetch(ENDPOINTS.ScanTaskImage, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          image_base64: asset.base64,
+          media_type: asset.type || 'image/jpeg',
+        }),
+      });
+      const raw = await response.text();
+      console.log('SCAN RAW:', response.status, raw.slice(0, 500));
+
+      let result;
+      try {
+        result = JSON.parse(raw);
+      } catch (e) {
+        Alert.alert('Server error', raw.slice(0, 300));
+        return;
+      }
+
+      if (result.code == 200 && Array.isArray(result.tasks) && result.tasks.length) {
+        const text = result.tasks.map((t, i) => `${i + 1}) ${t}`).join('\n');
+        setDescription(prev => (prev && prev.trim() ? prev + '\n' + text : text));
+        setDescriptionError('');
+      } else {
+        Alert.alert('Scan failed', result.message || 'Tasks nahi mile');
+      }
+    } catch (e) {
+      console.error('Scan error:', e);
+      Alert.alert('Error', String(e?.message || e));
+    } finally {
+      setScanLoading(false);
+    }
+  };
 
   const ProjectName = async () => {
     const url = ENDPOINTS.ListProject;
@@ -480,6 +535,19 @@ const AddTask = () => {
               ) : null}
             </View>
 
+            <TouchableOpacity
+              onPress={() => Alert.alert('Scan Tasks', 'Photo kahan se lena hai?', [
+                { text: 'Camera', onPress: () => pickAndScan(true) },
+                { text: 'Gallery', onPress: () => pickAndScan(false) },
+                { text: 'Cancel', style: 'cancel' },
+              ])}
+              style={styles.scanBtn}
+              disabled={scanLoading}
+            >
+              {scanLoading
+                ? <ActivityIndicator size="small" color={colors.primary} />
+                : <Text style={styles.scanBtnText}>📷 Scan Tasks from Photo</Text>}
+            </TouchableOpacity>
             {/* Task Name */}
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>
@@ -1226,4 +1294,10 @@ const styles = StyleSheet.create({
     fontFamily: 'SemiBold24',
     marginTop: 1,
   },
+  scanBtn: {
+    height: 46, borderWidth: 1.2, borderColor: colors.primary,
+    borderStyle: 'dashed', borderRadius: 10,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 14,
+  },
+  scanBtnText: { color: colors.primary, fontFamily: 'Montserrat-ExtraBold', fontSize: 13 },
 });
