@@ -1013,7 +1013,7 @@ const Leave = () => {
         <Text
           style={{
             fontFamily: 'Montserrat-ExtraBold',
-            fontSize: 15,
+            fontSize: 13,
             color: '#fff',
           }}>
           Apply Leave

@@ -26,8 +26,10 @@ import RNExitApp from 'react-native-exit-app';
 import LeaveNotificationModal from '../Components/LeaveNotificationModal';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import { stripHtml } from '../CommonFile/htmlUtils';
+import { useLang } from '../src/i18n/autoTranslate';
 
 const Deshboard = () => {
+  useLang();
   const navigation = useNavigation();
   const [memberName, setMemberName] = useState('');
   const [exitModalVisible, setExitModalVisible] = useState(false);
@@ -1340,6 +1342,7 @@ const Deshboard = () => {
                     { label: 'Birthday', icon: 'cake-variant-outline', bg: '#FCE7F3', tint: '#DB2777', screen: 'Listbirthday' },
                     { label: 'Report', icon: 'chart-box-outline', bg: '#EFF6FF', tint: '#2563EB', screen: 'ReportScreen' },
                     { label: 'Rules', icon: 'gavel', bg: '#EDE9FE', tint: '#7C3AED', screen: 'Rules' },
+                    { label: 'Settings', icon: 'cog-outline', bg: '#F3F4F6', tint: '#374151', screen: 'settingscreen' },
                   ]
 
                   : memberPosition === 'HR'
@@ -1353,6 +1356,7 @@ const Deshboard = () => {
                       { label: 'Birthday', icon: 'cake-variant-outline', bg: '#FCE7F3', tint: '#DB2777', screen: 'Listbirthday' },
                       { label: 'Report', icon: 'chart-box-outline', bg: '#EFF6FF', tint: '#2563EB', screen: 'ReportScreen' },
                       { label: 'Rules', icon: 'gavel', bg: '#EDE9FE', tint: '#7C3AED', screen: 'Rules' },
+                      { label: 'Settings', icon: 'cog-outline', bg: '#F3F4F6', tint: '#374151', screen: 'settingscreen' },
                     ]
                     : memberPosition === 'Project Manager'
 
@@ -1366,6 +1370,7 @@ const Deshboard = () => {
                         { label: 'Birthday', icon: 'cake-variant-outline', bg: '#FCE7F3', tint: '#DB2777', screen: 'Listbirthday' },
                         { label: 'Report', icon: 'chart-box-outline', bg: '#EFF6FF', tint: '#2563EB', screen: 'ReportScreen' },
                         { label: 'Rules', icon: 'gavel', bg: '#EDE9FE', tint: '#7C3AED', screen: 'Rules' },
+                        { label: 'Settings', icon: 'cog-outline', bg: '#F3F4F6', tint: '#374151', screen: 'settingscreen' },
                       ]
 
                       : [
@@ -1376,6 +1381,7 @@ const Deshboard = () => {
                         { label: 'Festival', icon: 'party-popper', bg: '#FFF7ED', tint: '#F97316', screen: 'ListFestival' },
                         { label: 'Birthday', icon: 'cake-variant-outline', bg: '#FCE7F3', tint: '#DB2777', screen: 'Listbirthday' },
                         { label: 'Rules', icon: 'gavel', bg: '#EDE9FE', tint: '#7C3AED', screen: 'Rules' },
+                        { label: 'Settings', icon: 'cog-outline', bg: '#F3F4F6', tint: '#374151', screen: 'settingscreen' },
                       ];
 
               return items.map((item, index) => (

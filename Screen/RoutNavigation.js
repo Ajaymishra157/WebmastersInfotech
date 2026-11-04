@@ -50,6 +50,7 @@ import AttendanceReport from './Report/AttendanceReport';
 import TaskDetail from './TaskDetail';
 import notifee from '@notifee/react-native';
 import Rules from './Rules';
+import settingscreen from './settingscreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -289,6 +290,13 @@ const MainStack = () => {
         name="Rules"
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        component={settingscreen}
+        name="settingscreen"
+        options={{ headerShown: false }}
+      />
+
+
 
 
 

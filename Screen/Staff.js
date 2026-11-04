@@ -1,6 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable comma-dangle */
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -21,6 +18,8 @@ import * as Animatable from 'react-native-animatable';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { ENDPOINTS } from '../CommonFile/Constant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslatedList } from '../src/i18n/useTranslatedList';
+import { getLang } from '../src/i18n/autoTranslate';
 
 const AVATAR_COLORS = [
   { bg: '#E4E9FB', text: '#5B6FE0' },
@@ -44,6 +43,11 @@ const getAvatarColor = index => AVATAR_COLORS[index % AVATAR_COLORS.length];
 const Staff = () => {
   const navigation = useNavigation();
   const [Staff, setStaff] = useState([]);
+
+
+
+
+
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState(null);
@@ -166,6 +170,22 @@ const Staff = () => {
 
     setFilteredStaff(data);
   }, [searchText, Staff, statusFilter]);
+
+
+
+  // Staff state ke baad:
+  const translatedFilteredStaff = useTranslatedList(filteredStaff, [
+    'member_name',
+    'member_position',
+    'member_city',
+  ]);
+
+  console.log(
+    'lang:', getLang(),
+    '| staff:', Staff?.length,
+    '| filtered:', filteredStaff?.length,
+    '| translated:', translatedFilteredStaff?.length,
+  );
 
   // ---- client-side stats (API doesn't send counts yet) ----
   const totalStaff = Staff.length;
@@ -679,7 +699,7 @@ const Staff = () => {
       </View>
       {/* List */}
       <FlatList
-        data={filteredStaff}
+        data={translatedFilteredStaff}
         keyExtractor={(item, index) =>
           item.member_id ? item.member_id.toString() : index.toString()
         }

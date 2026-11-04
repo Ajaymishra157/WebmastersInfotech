@@ -4,6 +4,9 @@ import { name as appName } from './app.json';
 import messaging from '@react-native-firebase/messaging';
 import notifee, { EventType } from '@notifee/react-native';
 import { displayLeaveNotification, handleLeaveAction } from './CommonFile/NotificationHandler';
+import './src/i18n/autoTranslate';
+import { loadLang } from './src/i18n/autoTranslate';
+loadLang();
 
 
 // App band ho tab bhi data-only FCM message aane par notification dikhao
